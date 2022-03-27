@@ -2,6 +2,7 @@ const express = require('express');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { ObjectID } = require('bson');
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
@@ -24,7 +25,7 @@ app.post('/api/login', async (req, res, next) =>
   var fn = '';
   var ln = '';
   var em = '';
-  
+
   if( results.length > 0 )
   {
     id = results[0]._id;
@@ -44,7 +45,15 @@ app.post('/api/register', async (req, res, next) =>
   const { login, password, firstName, lastName, email } = req.body;
   const db = client.db();
   const results = await 
-  db.collection('Users').insertOne({Login:login,Password:password,FirstName:firstName,LastName:lastName,Email:email})
+  db.collection('Users').insertOne(
+    {
+      Login:login,
+      Password:password,
+      FirstName:firstName,
+      LastName:lastName,
+      Email:email,
+      PlayedGames:[]
+    })
 
   result = false
   id = ''
@@ -54,6 +63,53 @@ app.post('/api/register', async (req, res, next) =>
     id = results.insertedId
   }
   var ret = { success:result, id:id, error:''};
+  res.status(200).json(ret);
+});
+
+app.post('/api/getPlayedGames', async (req, res, next) => 
+{
+  // incoming: playerID
+  // outgoing: list of games played
+  var error = '';
+  const { id } = req.body;
+  const db = client.db();
+  const results = await 
+  db.collection('Users').find({_id: ObjectID(id)}).toArray();
+
+  PlayedGames = []
+  if( results != null)
+  {
+    PlayedGames = results[0].PlayedGames
+  }
+
+  var ret = { PlayedGames:PlayedGames, id:id, error:''};
+  res.status(200).json(ret);
+});
+
+app.post('/api/addPlayedGame', async (req, res, next) => 
+{
+  // incoming: playerID
+  // outgoing: list of games played
+  var error = '';
+  const { id, time, clicks} = req.body;
+  
+  const db = client.db();
+  const results = await 
+  db.collection('Users').updateOne(
+    { _id: ObjectID(id) },
+    { $push: { PlayedGames: { time: time, clicks: clicks} } },
+  );
+
+  acknowledged = false
+  matchCount = 0
+  modified = 0
+  if( results != null)
+  {
+    acknowledged = results.acknowledged
+    matchCount = results.matchedCount
+    modified = results.modifiedCount
+  }
+  var ret = { success:acknowledged, matchCount:matchCount, modified:modified, id:id, error:''};
   res.status(200).json(ret);
 });
 
