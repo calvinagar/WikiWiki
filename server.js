@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { ObjectID } = require('bson');
 const app = express();
+const nodemailer = require('nodemailer');
+const emailValidator = require('email-validator');
 app.use(cors());
 app.use(bodyParser.json());
 const MongoClient = require('mongodb').MongoClient;
@@ -14,7 +16,7 @@ client.connect();
 app.post('/api/login', async (req, res, next) => 
 {
   // incoming: login, password
-  // outgoing: id, firstName, lastName, error
+  // outgoing: id, firstName, lastName, email, error
  var error = '';
   const { login, password } = req.body;
   const db = client.db();
@@ -39,8 +41,8 @@ app.post('/api/login', async (req, res, next) =>
 
 app.post('/api/register', async (req, res, next) => 
 {
-  // incoming: login, password, email, firstName, lastName
-  // outgoing: id, firstName, lastName, error
+  // incoming: login, password, firstName, lastName, email
+  // outgoing: id, error
  var error = '';
   const { login, password, firstName, lastName, email } = req.body;
   const db = client.db();
@@ -64,6 +66,53 @@ app.post('/api/register', async (req, res, next) =>
   }
   var ret = { success:result, id:id, error:''};
   res.status(200).json(ret);
+});
+
+app.post('/api/sendVerificationEmail', async (req, res, next) =>
+{
+  // incoming: emails
+  // outgoing: code, error
+  var email = req.body.email;
+  
+  if (email && emailValidator.validate(email))
+  {
+    // generate a random 5-digit code
+    var code = Math.floor(Math.random() * 90000) + 10000;
+
+    var transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: "thewikiwikigame@gmail.com",
+        pass: "WikiWikiEmail"
+      }
+    });
+
+    const mailOptions = {
+      from: '"WikiWiki" <thewikiwikigame@gmail.com>', // sender's email
+      to: email, // recipient
+      subject: 'Email Verification Code', // subject
+      text: 'Your verification code is ' + code.toString() + '.'
+      // html: '<b></b>' // html content
+    };
+
+    let info = await transport.sendMail(mailOptions);
+
+    var ret = { success:true, code:code, error:''};
+    res.status(200).json(ret);
+  }
+  else
+  {
+    if (email)
+    {
+      var ret = { success:false, code:0, error:'email is invalid'}
+      res.status(200).json(ret);
+    }
+    else
+    {
+      var ret = { success:false, code:0, error:'email is null'}
+      res.status(200).json(ret);
+    }
+  }
 });
 
 app.post('/api/getPlayedGames', async (req, res, next) => 
@@ -126,4 +175,4 @@ app.use((req, res, next) =>
   );
   next();
 });
-app.listen(5000); // start Node + Express server on port 5000
+app.listen(5001); // start Node + Express server on port 5000
