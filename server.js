@@ -313,5 +313,5 @@ app.use((req, res, next) =>
 
 app.listen(PORT, () =>
 {
-  console.log('Server listening on port ' + PORT);
+  console.log('Server is listening on port ' + PORT);
 }); // start Node + Express server on port 5001
