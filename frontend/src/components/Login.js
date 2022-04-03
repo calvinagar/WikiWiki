@@ -24,9 +24,9 @@ function Login()
         {    
             const response = await fetch(buildPath('api/login'),{method:'POST',body:js,headers:{'Content-Type': 'application/json'}});
             var res = JSON.parse(await response.text());
-            if( res.id <= 0 )
+            if( !res.success )
             {
-                alert('User/Password combination incorrect');
+                alert('User/Password combination incorrect.');
             }
             else
             {

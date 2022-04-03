@@ -45,7 +45,7 @@ app.post('/api/login', async (req, res, next) =>
   const db = client.db("largeProject");
   const results = await 
   usersCollection.find({login:login,password:password}).toArray();
-  console.log(results)
+  // console.log(results) // debug
   var id = -1;
   var fn = '';
   var ln = '';
@@ -54,9 +54,9 @@ app.post('/api/login', async (req, res, next) =>
   if( results.length > 0 )
   {
     id = results[0]._id;
-    fn = results[0].FirstName;
-    ln = results[0].LastName;
-    em = results[0].Email
+    fn = results[0].firstName;
+    ln = results[0].lastName;
+    em = results[0].email
   }
   var ret = { id:id, firstName:fn, lastName:ln, email:em, error:'' };
   res.status(200).json(ret);
@@ -79,14 +79,14 @@ app.post('/api/register', async (req, res, next) =>
   const emailCheck = await db.collection('users').find({email:email}).toArray();
   if (emailCheck.length > 0)
   {
-    var ret = { success:false, id:-1, error:'Someone has already registered with this email.'}
+    var ret = { success:false, email:'', error:'Someone has already registered with this email.'}
     return res.status(200).json(ret);
   }
   // check if there is already an account with that username
   const usernameCheck = await db.collection('users').find({login:login}).toArray();
   if (usernameCheck.length > 0)
   {
-    var ret = { success:false, id:-1, error:'Someone has already registered with this username.'}
+    var ret = { success:false, email:'', error:'Someone has already registered with this username.'}
     return res.status(200).json(ret);
   }
 
@@ -98,6 +98,7 @@ app.post('/api/register', async (req, res, next) =>
       firstName:firstName,
       lastName:lastName,
       email:email,
+      verifiedEmail:false,
       playedGames:[]
     })
 
@@ -106,14 +107,14 @@ app.post('/api/register', async (req, res, next) =>
   {
     result = insert.acknowledged
   }
-  var ret = { success:result, email:email, error:''};
+  var ret = { success:result, email:email, error:'' };
   res.status(200).json(ret);
 });
 
 app.post('/api/sendVerificationEmail', async (req, res, next) =>
 {
   // incoming: email
-  // outgoing: code, error
+  // outgoing: bool, code, error
   var email = req.body.email;
 
   const db = client.db("largeProject");
@@ -136,7 +137,7 @@ app.post('/api/sendVerificationEmail', async (req, res, next) =>
       service: 'gmail',
       auth: {
         user: "thewikiwikigame@gmail.com",
-        pass: "WikiWikiEmail"
+        pass: process.env.EMAIL_PASSWORD
       }
     });
 
@@ -150,7 +151,13 @@ app.post('/api/sendVerificationEmail', async (req, res, next) =>
 
     let send = await transport.sendMail(mailOptions);
 
-    var ret = { success:true, code:code, error:''};
+    const addCodeToDB = await 
+    db.collection('users').updateOne(
+      { email:email },
+      { $set: { emailVerificationCode:code } }
+    );
+
+    var ret = { success:true, code:code, error:'' };
     res.status(200).json(ret);
   }
   else
@@ -171,7 +178,7 @@ app.post('/api/sendVerificationEmail', async (req, res, next) =>
 app.post('/api/sendPasswordResetEmail', async (req, res, next) =>
 {
   // incoming: email
-  // outgoing: code, error
+  // outgoing: bool, code, error
   var email = req.body.email;
 
   const db = client.db("largeProject");
@@ -208,6 +215,12 @@ app.post('/api/sendPasswordResetEmail', async (req, res, next) =>
 
     let send = await transport.sendMail(mailOptions);
 
+    const addCodeToDB = await 
+    db.collection('users').updateOne(
+      { email:email },
+      { $set: { passwordResetCode:code } }
+    );
+
     var ret = { success:true, code:code, error:''};
     res.status(200).json(ret);
   }
@@ -226,10 +239,66 @@ app.post('/api/sendPasswordResetEmail', async (req, res, next) =>
   }
 });
 
+app.post('/api/verifyCode', async (req, res, next) => 
+{
+  // incoming: verifyEmail (bool), email, code (int)
+  // outgoing: verified bool, error
+
+  // note: verifyEmail bool is true when the user is trying to verify their email,
+  //       and false when the user is trying to reset their password
+
+  const verifyEmail = req.body.verifyEmail;
+  const email = req.body.email;
+  const code = req.body.code;
+  
+  const db = client.db("largeProject");
+  const results = await 
+  db.collection('users').find({ email:email }).toArray();
+
+  if (results.length > 0)
+  {
+    if (verifyEmail && results[0].emailVerificationCode == code)
+    {
+      const removeCodeFromDB = await
+      db.collection('users').updateOne(
+        { email:email },
+        { $unset: { emailVerificationCode:0 } }
+      );
+      const addVerifiedBool = await
+      db.collection('users').updateOne(
+        { email:email },
+        { $set: { verifiedEmail:true } }
+      );
+      var ret = { verified:true, error:'' };
+      res.status(200).json(ret);
+    }
+    else if (!verifyEmail && results[0].passwordResetCode == code)
+    {
+      const removeCodeFromDB = await
+      db.collection('users').updateOne(
+        { email:email },
+        { $unset: { passwordResetCode:0 } }
+      );
+      var ret = { verified:true, error:''};
+      res.status(200).json(ret);
+    }
+    else
+    {
+      var ret = { verified:false, error:'Code is incorrect.'};
+      res.status(200).json(ret);
+    }
+  }
+  else
+  {
+    var ret = { verified:false, error:'Unable to find an account with that email.'};
+    res.status(200).json(ret);
+  }
+})
+
 app.post('/api/changePassword', async (req, res, next) =>
 {
   // incoming: email, password (new password)
-  // outgoing: error
+  // outgoing: bool, error
   const email = req.body.email;
   const newPassword = req.body.password;
   const db = client.db("largeProject");
@@ -313,5 +382,5 @@ app.use((req, res, next) =>
 
 app.listen(PORT, () =>
 {
-  console.log('Server is listening on port ' + PORT);
+  console.log('Server listening on port ' + PORT);
 }); // start Node + Express server on port 5001
