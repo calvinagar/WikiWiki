@@ -33,7 +33,9 @@ client.connect(err => {
     client.close();
   }
 });
-const usersCollection = client.db("largeProject").collection("users");
+
+// bool so that setTimeout() to delete the leaderboard is only called once a day
+let hasDeleteLeaderboardBeenQueued = false;
 
 app.post('/api/login', async (req, res, next) => 
 {
@@ -44,7 +46,7 @@ app.post('/api/login', async (req, res, next) =>
   const password = req.body.password;
   const db = client.db("largeProject");
   const results = await 
-  usersCollection.find({login:login,password:password}).toArray();
+  db.collection('users').find({login:login,password:password}).toArray();
   // console.log(results) // debug
   var id = -1;
   var fn = '';
@@ -353,6 +355,41 @@ app.post('/api/addPlayedGame', async (req, res, next) =>
     { $push: { playedGames: { time: time, clicks: clicks} } },
   );
 
+  // check to see if the leaderboard needs to be cleared before we add the player's game
+  if (!hasDeleteLeaderboardBeenQueued)
+  {
+    hasDeleteLeaderboardBeenQueued = true;
+
+    const leaderboardDB = client.db('largeProject').collection('dailyLeaderboard');
+
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    const deleteLeaderboard = setTimeout(function()
+    {
+      leaderboardDB.deleteMany({});
+      console.log("Daily leaderboard has been cleared.");
+      hasDeleteLeaderboardBeenQueued = false;
+    }, tomorrow.getTime() - Date.now());
+  }
+
+  // find username of the player and add their game to the daily leaderboard
+  const player = await db.collection('users').find({email:email}).toArray();
+  if (player.length == 0)
+  {
+    var ret = { success:false, matchCount:-1, modified:-1, email:'', error:'Could not find a player with that email.'};
+    res.status(200).json(ret);
+  }
+  var username = player[0].login;
+  const addGameToLeaderboard = await
+  db.collection('dailyLeaderboard').insertOne(
+  {
+    login: username,
+    time: time,
+    clicks: clicks
+  });
+
   acknowledged = false
   matchCount = 0
   modified = 0
@@ -363,6 +400,18 @@ app.post('/api/addPlayedGame', async (req, res, next) =>
     modified = results.modifiedCount
   }
   var ret = { success:acknowledged, matchCount:matchCount, modified:modified, email:email, error:''};
+  res.status(200).json(ret);
+});
+
+app.post('/api/getDailyLeaderboard', async (req, res, next) =>
+{
+  // incoming: 
+  // outgoing: bool, daily leaderboard sorted by clicks
+  const db = client.db('largeProject');
+  const sortLeaderboard = await
+  db.collection('dailyLeaderboard').find({}, {projection: {_id:0, login:1, clicks:1, time:1} }).sort({clicks:1}).toArray();
+
+  var ret = { success:true, leaderboard:sortLeaderboard }
   res.status(200).json(ret);
 });
 
@@ -378,6 +427,10 @@ app.use((req, res, next) =>
     'GET, POST, PATCH, DELETE, OPTIONS'
   );
   next();
+});
+
+app.post('/api/test', async (req, res, next) =>
+{
 });
 
 app.listen(PORT, () =>
