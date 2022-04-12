@@ -429,10 +429,6 @@ app.use((req, res, next) =>
   next();
 });
 
-app.post('/api/test', async (req, res, next) =>
-{
-});
-
 app.listen(PORT, () =>
 {
   console.log('Server listening on port ' + PORT);
