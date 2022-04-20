@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import Table from 'react-bootstrap/Table'
 
 
-class Leaderboard extends Component {
+export default class Leaderboard extends Component {
 	constructor() { //add userid as parameter, so that we can populate data from constructor??
         super();
  		this.state = {
