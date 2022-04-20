@@ -9,7 +9,7 @@ export default class Leaderboard extends Component {
 		  data: null,
 		}; 
 	}
-    //Delete this:
+
     componenetDidMount() {
         fetch('/getPlayerGames')
             .then(res => {console.log(res);})
@@ -28,10 +28,10 @@ export default class Leaderboard extends Component {
                 <thead>
                     <tr>
                         <th>Rank</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
                         <th>Username</th>
-                        <th>Time</th>
+                        <th>Clicks</th>
+                        <th>Start-Page</th>
+                        <th>End-Page</th>
                     </tr>
                 </thead>
                 <tbody>
