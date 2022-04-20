@@ -9,6 +9,11 @@ export default class Leaderboard extends Component {
 		  data: null,
 		}; 
 	}
+    //Delete this:
+    componenetDidMount() {
+        fetch('/getPlayerGames')
+            .then(res => {console.log(res);})
+    }
 
     //funct getdata
         //using api pull number of people in leaderboards
