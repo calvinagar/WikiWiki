@@ -35,7 +35,7 @@ export default class Leaderboard extends Component {
                                 " <td>" + res.leaderboard[i].login + "</td>" +
                                 " <td>" + res.leaderboard[i].clicks + "</td>" +
                                 " <td>" + res.leaderboard[i].startpage + "</td>" + 
-                                " <td>" + res.leaderboard[i].endpage + "</td>";
+                                " <td>" + res.leaderboard[i].endpage + "</td> </tr>";
             }
             
             this.setState({ games: tempGames });
