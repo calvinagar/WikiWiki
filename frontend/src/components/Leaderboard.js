@@ -6,16 +6,41 @@ export default class Leaderboard extends Component {
 	constructor() { //add userid as parameter, so that we can populate data from constructor??
         super();
  		this.state = {
-		  data: null,
+		  user: localStorage.getItem('user_data'),
+          games: []
 		}; 
+
+        this.getData();
 	}
 
-    componenetDidMount() {
+/*     componenetDidMount() {
         fetch('/getPlayerGames')
             .then(res => {console.log(res);})
-    }
+    } */
 
-    //funct getdata
+    getData = async () =>
+    {
+        try{
+            var response = await fetch(buildpath('/api/getDailyLeaderboard'), {method:'POST',headers:{'Content-Type': 'application/json'}});
+            var res = JSON.parse(await response.text());
+            //if id == -1 error?
+            //else:
+           //this.setState({games: res.Leaderboard});
+            var rank = 1;
+
+            tempGames = [];
+
+            for(i = 0; i < res.Leaderboard.length; i++){
+                tempGames[i] = ""res.Leaderboard[i]
+            }
+            
+            
+        }
+        catch(e)
+        {
+            alert(e.toString())
+        }
+    }
         //using api pull number of people in leaderboards
         //create blank array
         //set each element of array equal to a person in the leaderboard and wrap for table element
