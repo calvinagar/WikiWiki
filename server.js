@@ -39,7 +39,6 @@ let hasDeleteLeaderboardBeenQueued = false;
 
 app.post('/api/login', async (req, res, next) => 
 {
-  console.log("here");
   // incoming: login, password
   // outgoing: id, firstName, lastName, email, error
   var error = '';

@@ -5,7 +5,7 @@ const server = 'http://localhost:5001';
 describe("POST /api/login", function() {
     it('responds with 200', async function() {
         const response = await request(server).post("/api/login").send({
-            username: "a",
+            login: "a",
             password: "b"
         })
         expect(response.statusCode).toBe(200)
@@ -15,7 +15,7 @@ describe("POST /api/login", function() {
 describe("POST /api/login", function() {
     it("Verify unregisted account is not logged in", async function() {
         const response = await request(server).post("/api/login").send({
-            username: "fshlfjasjdkl",
+            login: "fshlfjasjdkl",
             password: "dsdbaj,msadd"
         })
         expect(response.statusCode).toBe(200)
@@ -106,7 +106,7 @@ describe("POST /api/changePassword", function() {
     it("Change players password", async function() {
         const response = await request(server).post("/api/changePassword").send({
             email: "rickL@gmail.com",
-            newPassword: "123"
+            password: "123"
         })
         expect(response.statusCode).toBe(200)
     });
@@ -116,7 +116,7 @@ describe("POST /api/changePassword", function() {
 describe("POST /api/login", function() {
     it('Login after changing password', async function() {
         const response = await request(server).post("/api/login").send({
-            username: "rickL@gmail.com",
+            login: "rickL",
             password: "123"
         })
         expect(response.statusCode).toBe(200)
