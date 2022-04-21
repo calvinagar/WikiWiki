@@ -65,7 +65,7 @@ export default class Leaderboard extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    {this.games}
+                    {this.state.games}
                 </tbody>
             </Table>
         );
