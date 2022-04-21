@@ -25,15 +25,20 @@ export default class Leaderboard extends Component {
             var res = JSON.parse(await response.text());
             //if id == -1 error?
             //else:
-           //this.setState({games: res.Leaderboard});
+           
             var rank = 1;
 
             tempGames = [];
 
             for(i = 0; i < res.Leaderboard.length; i++){
-                tempGames[i] = ""res.Leaderboard[i]
+                tempGames[i] = " <tr> <td>" + res.leaderboard[i].rank + "</td>" +
+                                " <td>" + res.leaderboard[i].login + "</td>" +
+                                " <td>" + res.leaderboard[i].clicks + "</td>" +
+                                " <td>" + res.leaderboard[i].startpage + "</td>" + 
+                                " <td>" + res.leaderboard[i].endpage + "</td>";
             }
             
+            this.setState({ games: tempGames });
             
         }
         catch(e)
@@ -60,7 +65,7 @@ export default class Leaderboard extends Component {
                     </tr>
                 </thead>
                 <tbody>
-                    //array object goes here
+                    {this.games}
                 </tbody>
             </Table>
         );
