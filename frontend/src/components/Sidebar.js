@@ -9,24 +9,23 @@ class Sidebar extends Component {
             <ul className="sidebar-nav">
               <li className="sidebar-brand">
                 {" "}
-                <a href="#"> WikWiki </a>
+                WikiWiki
               </li>
               <li>
                 {" "}
-                {" "}
-                <a href="#">Home</a>{" "}
+                <a href="MainPage">Home</a>{" "}
               </li>
               <li>
                 {" "}
-                <a href="#">Leaderboard</a>{" "}
+                <a href="LeaderboardPage">Leaderboard</a>{" "}
               </li>
               <li>
                 {" "}
-                <a href="#">User</a>{" "}
+                <a href="UserPage">User</a>{" "}
               </li>
               <li>
                 {" "}
-                <a href="#">Play</a>{" "}
+                <a href="GamePage">Play</a>{" "}
               </li>
             </ul>
           </div>

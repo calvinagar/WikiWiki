@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
-// Note: Not in a bootstrap theme
+import Row from 'react-bootstrap/Row';
 
 class GameDiv extends Component {
 	constructor() {
@@ -23,6 +23,7 @@ class GameDiv extends Component {
                 console.log("error " + xhttp.status + ": " + xhttp.statusText)
             }
         }
+        window.scrollTo(0, 0);
         
     }
 
@@ -44,7 +45,6 @@ class GameDiv extends Component {
         console.log(afterLastSlash);
     }
 
-    //no longer needed
     /*upper = () => {
         var score = document.getElementById('score');
         var text = score.innerHTML; 
@@ -94,11 +94,12 @@ class GameDiv extends Component {
     render() {
         return (
             <>
-                <p class="score" id="score">Number of Links Clicked: {this.state.count}</p>
-                
-                <div id="gameDiv" class="gameDiv">
-                    
-                </div>
+                <Row id="scoreRow">
+                    <p class="score" id="score">Number of Links Clicked: {this.state.count}</p>
+                </Row>
+                <Row>
+                <div id="gameDiv" class="gameDiv"/>
+                </Row>
             </>
         );
       }

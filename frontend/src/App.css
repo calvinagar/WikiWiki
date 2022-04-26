@@ -1,3 +1,73 @@
 .header {
     text-align: center;
 }
+
+/* .wrapper > * {
+    flex: 1 100%;
+  } */
+  .container {
+    
+    display: flex;
+   flex-wrap: nowrap;
+   align-items: stretch;
+   justify-content: space-evenly;
+   /*font-family: sans-serif;*/
+   font-family: 'Linux Libertine','Georgia','Times',serif;
+ }
+
+/* .col {
+   border: 1.5px;
+   border-color:crimson;
+   padding: auto;
+}
+.row {
+   border: 1.5px;
+   border-color:rgb(37, 220, 20);
+   padding: auto;
+} */
+#title {
+   padding-top: 3%;
+  margin-left: 2%;
+   font-size: 25px;
+   border-bottom: 1px solid #a2a9b1;
+   user-select: none;
+}
+
+#newRow {
+   padding: 40px;
+}
+#table {
+   padding:50px;
+   padding-top: 0px;
+
+}
+#bodytext {
+   user-select: none;
+   padding: 30px;
+   padding-left: 40px;
+   font-size: 20px;
+}
+
+/*#scoreRow
+{
+  position: fixed;
+  background-color: #f9f9f9;
+  height: 30px;
+  width: 400px;
+  border: 40px;
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+}*/
+
+#scoreRow
+{
+  text-align: center;
+  user-select: none;
+}
+
+#gameDiv
+{
+  margin-top: 40px;
+}
