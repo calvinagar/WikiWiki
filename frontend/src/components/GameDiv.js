@@ -47,7 +47,10 @@ class GameDiv extends Component {
         //console.log(JSON.parse(localStorage.getItem('initial_game')));
         //console.log("testestsetst" + JSON.parse(localStorage.getItem('initial_game')).start_title);
         //let startTitle = JSON.parse(localStorage.getItem('initial_game')).start_title;
-        this.UserAction(JSON.parse(localStorage.getItem('initial_game')).start_title);
+        var game = JSON.parse(localStorage.getItem('initial_game'));
+        document.getElementById('startDiv').innerHTML = "<p><b>StartPage: </b> " + game.start_title.replace('_', ' ') +"</p>";
+        document.getElementById('endDiv').innerHTML = "<p><b>EndPage: </b> " + game.end_title.replace('_', ' ') +"</p>";
+        this.UserAction(game.start_title);
     }
 
     UserAction = (pageTitle) => {
