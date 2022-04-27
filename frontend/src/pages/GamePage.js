@@ -14,7 +14,7 @@ const GamePage = () =>
                 <Col xs={2}><Sidebar/></Col>
                 <Col>
                     <Row xs={0} id="title">Play</Row>
-                    <Row id="newRow"><Col><p><b>StartPage: </b>Penicillium erythromellis</p></Col><Col><p><b>EndPage:</b> Silver Cascade Falls (Colorado Springs, Colorado)</p></Col></Row>
+                    <Row id="newRow2"><Col><p><b>StartPage: </b>Penicillium erythromellis</p></Col><Col><p><b>EndPage:</b> Silver Cascade Falls (Colorado Springs, Colorado)</p></Col></Row>
                     <Row id="table"><GameDiv/></Row>
                 </Col>
             </Container>

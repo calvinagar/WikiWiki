@@ -3,18 +3,56 @@ import ReactDOM from "react-dom";
 import Row from 'react-bootstrap/Row';
 
 class GameDiv extends Component {
+    
 	constructor() {
         super();
  		this.state = {
 		  count: 0,
 		}; 
-
-        this.UserAction('Rock_music') // Needs to be switched with a pulled title of a random page
 	}
 
-    UserAction = (pageTitleStr) => {
+    async componentDidMount()
+    {
+        let xhttp1 = new XMLHttpRequest();
+        let str = ""
+        xhttp1.open("GET", "https://en.wikipedia.org/api/rest_v1/page/random/title", true);
+        xhttp1.send();
+        xhttp1.onload = () => {
+            if (xhttp1.status == 200) {
+                str = JSON.parse(xhttp1.response).items[0].title
+                console.log(str);
+                
+                let str2 = "";
+
+                let xhttp2 = new XMLHttpRequest();
+                xhttp2.open("GET", "https://en.wikipedia.org/api/rest_v1/page/random/title", true);
+                xhttp2.send();
+                xhttp2.onload = () => {
+                    if (xhttp2.status == 200) {
+                        str2 = JSON.parse(xhttp2.response).items[0].title;
+                        console.log("first title: " + str);
+                        console.log("second title: " + str2);
+                        var obj = {start_title:str, end_title:str2};
+                        localStorage.setItem('initial_game', JSON.stringify(obj));
+                    } else {
+                        console.log("error " + xhttp2.status + ": " + xhttp2.statusText);
+                    }
+                }
+
+            } else {
+                console.log("error " + xhttp1.status + ": " + xhttp1.statusText);
+            }   
+        }
+        //console.log("str from below: " + str);
+        //console.log(JSON.parse(localStorage.getItem('initial_game')));
+        //console.log("testestsetst" + JSON.parse(localStorage.getItem('initial_game')).start_title);
+        //let startTitle = JSON.parse(localStorage.getItem('initial_game')).start_title;
+        this.UserAction(JSON.parse(localStorage.getItem('initial_game')).start_title);
+    }
+
+    UserAction = (pageTitle) => {
         let xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "https://en.wikipedia.org/w/api.php?action=parse&page=" + pageTitleStr + "&prop=text&formatversion=2&format=json&origin=*", true);
+        xhttp.open("GET", "https://en.wikipedia.org/w/api.php?action=parse&page=" + pageTitle + "&prop=text&formatversion=2&format=json&origin=*", true);
         xhttp.send();
         xhttp.onload = () => {
             if (xhttp.status == 200) {
@@ -22,7 +60,8 @@ class GameDiv extends Component {
             } else {
                 console.log("error " + xhttp.status + ": " + xhttp.statusText)
             }
-        }
+        };
+                
         window.scrollTo(0, 0);
         
     }
@@ -57,7 +96,7 @@ class GameDiv extends Component {
     gotData = (data) => {
     
         // Log data for testing purposes
-        console.log(data);
+        //console.log(data);
         
         // Get the HTML of the Wiki page from JSON
         var text = data.parse.text;
