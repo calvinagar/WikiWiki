@@ -66,6 +66,38 @@ app.post('/api/login', async (req, res, next) =>
   res.status(200).json(ret);
 });
 
+app.post('/api/updateUser', async (req, res, next) => 
+{
+  // incoming: login, password
+  // outgoing: id, firstName, lastName, email, error
+  var error = '';
+  const login = req.body.login;
+  const firstName = req.body.firstName;
+  const lastName = req.body.lastName;
+  const email = req.body.email;
+
+  const db = client.db("largeProject");
+  const results = await 
+  db.collection('users').updateOne(
+    { email:email },
+    { $set: { firstName : firstName, lastName : lastName, login : login } }
+  );
+
+  var modifiedCount = 0
+  var matchedCount = '';
+  var success = false;
+
+  if( results != null )
+  {
+    matchedCount = results.matchedCount
+    modifiedCount = results.modifiedCount
+  }
+  if (modifiedCount == 1) success = true
+  var ret = { success:success,modifiedCount:modifiedCount, matchedCount:matchedCount, error:'' };
+  res.status(200).json(ret);
+});
+
+
 app.post('/api/register', async (req, res, next) => 
 {
   // incoming: login, password, firstName, lastName, email
@@ -103,7 +135,9 @@ app.post('/api/register', async (req, res, next) =>
       lastName:lastName,
       email:email,
       verifiedEmail:false,
-      playedGames:[]
+      playedGames:[],
+      currentClicks:0,
+      currentPage:null,
     })
 
   result = false
@@ -114,6 +148,8 @@ app.post('/api/register', async (req, res, next) =>
   var ret = { success:result, email:email, error:'' };
   res.status(200).json(ret);
 });
+
+
 
 app.post('/api/sendVerificationEmail', async (req, res, next) =>
 {
@@ -340,6 +376,37 @@ app.post('/api/getPlayedGames', async (req, res, next) =>
   var ret = { playedGames:playedGames, email:email, error:''};
   res.status(200).json(ret);
 });
+
+
+app.post('/api/updateCurrentGame', async (req, res, next) => 
+{
+  // incoming: currrent page, email
+  // outgoing: nothing
+  var error = '';
+  const email = req.body.email;
+  const currentPage = req.body.currentPage;
+
+  const db = client.db("largeProject");
+  const results = await 
+  db.collection('users').updateOne(
+    { email: email },
+    { $set: { currentPage: currentPage}, $inc: { currentClicks: 1 } },
+  );
+
+  var modifiedCount = 0
+  var matchedCount = 0;
+  var success = false;
+
+  if( results != null )
+  {
+    matchedCount = results.matchedCount
+    modifiedCount = results.modifiedCount
+  }
+  if (modifiedCount == 1) success = true
+  var ret = { success:success,modifiedCount:modifiedCount, matchedCount:matchedCount, error:'' };
+  res.status(200).json(ret);
+});
+
 
 app.post('/api/addPlayedGame', async (req, res, next) => 
 {
