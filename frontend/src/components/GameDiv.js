@@ -48,12 +48,24 @@ class GameDiv extends Component {
         //console.log("testestsetst" + JSON.parse(localStorage.getItem('initial_game')).start_title);
         //let startTitle = JSON.parse(localStorage.getItem('initial_game')).start_title;
         var game = JSON.parse(localStorage.getItem('initial_game'));
-        document.getElementById('startDiv').innerHTML = "<p><b>StartPage: </b> " + game.start_title.replace('_', ' ') +"</p>";
-        document.getElementById('endDiv').innerHTML = "<p><b>EndPage: </b> " + game.end_title.replace('_', ' ') +"</p>";
+        document.getElementById('startDiv').innerHTML = "<p><b>StartPage: </b> " + game.start_title.replaceAll('_', ' ') +"</p>";
+        document.getElementById('endDiv').innerHTML = "<p><b>EndPage: </b> " + game.end_title.replaceAll('_', ' ') +"</p>";
         this.UserAction(game.start_title);
     }
 
     UserAction = (pageTitle) => {
+        //Complete Game
+        var current = JSON.parse(localStorage.getItem('initial_game'));
+        //remove this:
+        console.log("end title: " + current.end_title + " \tstart title: " + current.start_title);
+        if (pageTitle == current.end_title)
+        {
+            //Finish by contacting API with end game call
+            var done = {start_title:current.start_title, end_title:current.end_title, clicks:this.state.count}
+        }
+        // Add call to update here:
+        
+
         let xhttp = new XMLHttpRequest();
         xhttp.open("GET", "https://en.wikipedia.org/w/api.php?action=parse&page=" + pageTitle + "&prop=text&formatversion=2&format=json&origin=*", true);
         xhttp.send();

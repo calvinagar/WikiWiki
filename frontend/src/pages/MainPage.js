@@ -17,7 +17,7 @@ const MainPage = () =>
                     <Row xs={0} id="title">Welcome (Welcome back ________)</Row>
                     <Row id="bodytext"><p>
                     The <b>Welcome</b> page of WikiWiki. This page provides users with information regarding their previous games, 
-                    such as the starting point, ending point,( their total time,) and amount of links used. Players are encouraged to explore the rest of WikiWiki from this location, with special emphasis being directed to the Play section. Players on this page are also thanked for joining the WikiWiki community.
+                    such as the starting point, ending point, amount of links used, and total time (in the case of a tie). Players are encouraged to explore the rest of WikiWiki from this location, with special emphasis being directed to the Play section. Players on this page are also thanked for joining the WikiWiki community.
                       </p>  
                     </Row>
                     <Row>
