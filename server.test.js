@@ -124,6 +124,36 @@ describe("POST /api/login", function() {
     });
 });
 
+describe("POST /api/updateUser", function() {
+    it('Update user info', async function() {
+        const response = await request(server).post("/api/updateUser").send({
+            login: "ricky123",
+            firstName: "Ricky",
+            lastName : "Lin",
+            email: "rickL@gmail.com"
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.success).toBe(true)
+    });
+});
+
+describe("POST /api/login", function() {
+    it('Login after changing password', async function() {
+        const response = await request(server).post("/api/login").send({
+            login: "ricky123",
+            password: "123"
+        })
+        expect(response.statusCode).toBe(200)
+    });
+});
+
+request(server).post("/api/updateUser").send({
+    login: "rickL",
+    firstName: "Rick",
+    lastName: "L",
+    email: "rickL@gmail.com"
+})
+
 
 describe("POST /api/getDailyLeaderboard", function() {
     it('Making sure the daily leaderboard is being returned', async function() {
