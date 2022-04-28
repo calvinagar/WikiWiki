@@ -83,7 +83,6 @@ app.post('/api/updateUser', async (req, res, next) =>
     { $set: { firstName : firstName, lastName : lastName, login : login } }
   );
 
-  console.log(results)
   var modifiedCount = 0
   var matchedCount = '';
   var success = false;
@@ -136,7 +135,9 @@ app.post('/api/register', async (req, res, next) =>
       lastName:lastName,
       email:email,
       verifiedEmail:false,
-      playedGames:[]
+      playedGames:[],
+      currentClicks:0,
+      currentPage:null,
     })
 
   result = false
@@ -375,6 +376,37 @@ app.post('/api/getPlayedGames', async (req, res, next) =>
   var ret = { playedGames:playedGames, email:email, error:''};
   res.status(200).json(ret);
 });
+
+
+app.post('/api/updateCurrentGame', async (req, res, next) => 
+{
+  // incoming: currrent page, email
+  // outgoing: nothing
+  var error = '';
+  const email = req.body.email;
+  const currentPage = req.body.currentPage;
+
+  const db = client.db("largeProject");
+  const results = await 
+  db.collection('users').updateOne(
+    { email: email },
+    { $set: { currentPage: currentPage}, $inc: { currentClicks: 1 } },
+  );
+
+  var modifiedCount = 0
+  var matchedCount = 0;
+  var success = false;
+
+  if( results != null )
+  {
+    matchedCount = results.matchedCount
+    modifiedCount = results.modifiedCount
+  }
+  if (modifiedCount == 1) success = true
+  var ret = { success:success,modifiedCount:modifiedCount, matchedCount:matchedCount, error:'' };
+  res.status(200).json(ret);
+});
+
 
 app.post('/api/addPlayedGame', async (req, res, next) => 
 {
