@@ -1,6 +1,12 @@
 import React, { Component } from "react";
 import ReactDOM from "react-dom";
 import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+
+
+var globalPages = {start_title: "", end_title: "", current_title: ""};
+
 
 class GameDiv extends Component {
     
@@ -13,7 +19,33 @@ class GameDiv extends Component {
 
     async componentDidMount()
     {
-        let xhttp1 = new XMLHttpRequest();
+        
+        // Get Start page title
+        fetch('https://en.wikipedia.org/api/rest_v1/page/random/title')
+        .then((response) => response.json())
+        .then((findresponse)=>{
+            const temp = findresponse.items[0].title;
+            return temp
+        }).then(function(value) { localStorage.setItem('start_page', value); localStorage.setItem('current_page', value);});
+
+
+        //Get end game title
+        fetch('https://en.wikipedia.org/api/rest_v1/page/random/title')
+        .then((response) => response.json())
+        .then((findresponse)=>{
+            const temp = findresponse.items[0].title;
+            return temp
+        }).then(function(value) { localStorage.setItem('end_page', value);});
+
+        var page = {start_title: localStorage.getItem('start_page'), end_title: localStorage.getItem('end_page'), current_title: localStorage.getItem('start_page')};
+
+        globalPages = page;
+
+        this.UserAction(globalPages.start_title);
+
+        //The previous code may seem unecessary BUT IT IS NECESSARY. Please do not change, the pages were being set to different values once UserAction is called every game.
+
+        /*let xhttp1 = new XMLHttpRequest();
         let str = ""
         xhttp1.open("GET", "https://en.wikipedia.org/api/rest_v1/page/random/title", true);
         xhttp1.send();
@@ -50,18 +82,25 @@ class GameDiv extends Component {
         var game = JSON.parse(localStorage.getItem('initial_game'));
         document.getElementById('startDiv').innerHTML = "<p><b>StartPage: </b> " + game.start_title.replaceAll('_', ' ') +"</p>";
         document.getElementById('endDiv').innerHTML = "<p><b>EndPage: </b> " + game.end_title.replaceAll('_', ' ') +"</p>";
-        this.UserAction(game.start_title);
+        this.UserAction(game.start_title);*/
     }
 
     UserAction = (pageTitle) => {
+        
+        globalPages.current_title = pageTitle;
+
+        if (localStorage.getItem('running_game')) {
+            localStorage.removeItem('running_game');
+            localStorage.setItem('running_game', globalPages);
+        } else {
+            localStorage.setItem('running_game', globalPages);
+        }
+
         //Complete Game
-        var current = JSON.parse(localStorage.getItem('initial_game'));
-        //remove this:
-        console.log("end title: " + current.end_title + " \tstart title: " + current.start_title);
-        if (pageTitle == current.end_title)
+        if (pageTitle == globalPages.end_title)
         {
             //Finish by contacting API with end game call
-            var done = {start_title:current.start_title, end_title:current.end_title, clicks:this.state.count}
+            var done = {user: localStorage.getItem('user_data').res.id, start_title: globalPages.start_title, end_title: globalPages.end_title, clicks: this.state.count};
         }
         // Add call to update here:
         
@@ -117,17 +156,19 @@ class GameDiv extends Component {
         var text = data.parse.text;
         // Get the title of the Wiki page from JSON
         var title = data.parse.title;
+
+        var gameDoc = document.getElementById("gameDiv");
         
         // Set the gameDiv to blank to clear any previous Wiki page data
-        document.getElementById("gameDiv").innerHTML = "";
+        gameDoc.innerHTML = "";
         
         // Add both the title and the body of the Wiki page
-        document.getElementById("gameDiv").innerHTML = "<h1 class='mw-headline'>" + title + "</h1>" + text;
+        gameDoc.innerHTML = "<h1 class='mw-headline'>" + title + "</h1>" + text;
         
         // Remove problematic elements (images, table of contents, refrences, edit buttons, etc.)
         const classesToRemove = ['.thumb', '.sistersitebox', '.mw-editsection', '.toc', '.reflist', '.reference', '.infobox', '.image', '.dmbox', '.box-Multiple_issues', '.sidebar-navbar', '.mbox-small'];
         for (var i = 0; i < classesToRemove.length; i++) {
-            document.querySelectorAll(classesToRemove[i]).forEach(e => e.remove());
+            gameDoc.querySelectorAll(classesToRemove[i]).forEach(e => e.remove());
         }
         
         // remove refrence section. this section is not targetable by class like the rest, so we have to use it's ID
@@ -138,18 +179,24 @@ class GameDiv extends Component {
         }
         
         // Add event listener to all links
-        var links = document.querySelectorAll( 'a' );
+        var links = gameDoc.querySelectorAll( 'a' );
         for ( var c = 0; c < links.length; c ++ ) {
             links[c].addEventListener('click', this.WhichLinkWasClicked);
         }
         
     }
 
+    quitGame = () =>
+    {
+
+    }
+
     render() {
         return (
             <>
-                <Row id="scoreRow">
-                    <p class="score" id="score">Number of Links Clicked: {this.state.count}</p>
+                <Row id="newRow3">
+                    <Col><p class="score" id="score">Number of Links Clicked: {this.state.count}</p></Col>
+                    <Col><Button onClick={this.quitGame} id="quitBtn">Quit</Button></Col>
                 </Row>
                 <Row>
                 <div id="gameDiv" class="gameDiv"/>

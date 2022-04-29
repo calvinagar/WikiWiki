@@ -66,6 +66,10 @@
   
 }
 
+#newRow3 {
+   margin-left: -3%;
+}
+
 #table {
   padding:50px;
   padding-top: 0px;
@@ -78,7 +82,7 @@
   font-size: 20px;
 }
 
-#scoreRow
+#score
 {
   text-align: center;
  user-select: none;
@@ -92,6 +96,10 @@
  border-width: 1px;
 }
 
+#quitBtn
+{
+   margin-left: 92%;
+}
 /*#scoreRow
 {
  text-align: center;
