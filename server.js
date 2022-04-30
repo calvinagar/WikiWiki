@@ -371,7 +371,7 @@ app.post('/api/getPlayedGames', async (req, res, next) =>
   db.collection('users').find({email:email}).toArray();
 
   playedGames = []
-  if( results != null)
+  if( results.length > 0)
   {
     playedGames = results[0].playedGames
   }
