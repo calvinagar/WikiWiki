@@ -23,6 +23,8 @@ app.use(cors());
 app.use(bodyParser.json());
 const req = require('express/lib/request');
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const { start } = require('repl');
+const { isNull } = require('util');
 require('dotenv').config();
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -136,8 +138,14 @@ app.post('/api/register', async (req, res, next) =>
       email:email,
       verifiedEmail:false,
       playedGames:[],
-      currentClicks:0,
-      currentPage:null,
+      currentGame: {
+        currentClicks:0,
+        currentPage:null,
+        startPage:null,
+        endPage:null,
+        inGame:false,
+        startTime:null
+      }
     })
 
   result = false
@@ -390,7 +398,7 @@ app.post('/api/updateCurrentGame', async (req, res, next) =>
   const results = await 
   db.collection('users').updateOne(
     { email: email },
-    { $set: { currentPage: currentPage}, $inc: { currentClicks: 1 } },
+    { $set: { "currentGame.currentPage": currentPage}, $inc: { "currentGame.currentClicks": 1 } },
   );
 
   var modifiedCount = 0
@@ -408,24 +416,148 @@ app.post('/api/updateCurrentGame', async (req, res, next) =>
 });
 
 
+app.post('/api/resumeCurrentGame', async (req, res, next) => 
+{
+  // incoming: email
+  // outgoing: clicks, startPage, endPage, currentPage
+  var error = '';
+  const email = req.body.email;
+
+  const db = client.db("largeProject");
+  const results = await 
+  db.collection('users').find({email:email}).toArray();
+
+  startPage = ''
+  endPage = ''
+  currentPage = ''
+  clicks = ''
+  inGame = false
+
+  if( results != null)
+  {
+    currentPage = results[0].currentGame.currentPage 
+    startPage = results[0].currentGame.startPage
+    endPage = results[0].currentGame.endPage
+    clicks = results[0].currentGame.currentClicks
+    inGame = results[0].currentGame.inGame
+  }
+
+  if (!inGame) 
+  {
+    var ret = { currentPage:currentPage,startPage:startPage, endPage:endPage, clicks:clicks, error:'No information on current game.'};
+  }
+  else
+  {
+    var ret = { currentPage:currentPage,startPage:startPage, endPage:endPage, clicks:clicks, error:'' };
+  }
+  res.status(200).json(ret);
+});
+
+app.post('/api/startGame', async (req, res, next) => 
+{
+  // incoming: email, startPage, endPage
+  // outgoing: nothing
+  var error = '';
+  const email = req.body.email;
+  const startPage = req.body.startPage;
+  const endPage = req.body.endPage;
+
+  var current = new Date();
+  console.log(current)
+
+  const db = client.db("largeProject");
+  const results = await 
+  db.collection('users').updateOne(
+    { email: email },
+    { $set: { "currentGame.startPage": startPage, 
+              "currentGame.endPage": endPage, 
+              "currentGame.inGame": true,
+              "currentGame.startTime": current,
+              "currentGame.currentPage": startPage
+            } },
+  );
+
+  var modifiedCount = 0
+  var matchedCount = 0;
+  var success = false;
+
+  if( results != null )
+  {
+    matchedCount = results.matchedCount
+    modifiedCount = results.modifiedCount
+  }
+  if (modifiedCount == 1) success = true
+  var ret = { success:success,modifiedCount:modifiedCount, matchedCount:matchedCount, error:'' };
+  res.status(200).json(ret);
+});
+
 app.post('/api/addPlayedGame', async (req, res, next) => 
 {
   // incoming: email, startPage, endPage, time, clicks
   // outgoing: list of games played
   var error = '';
   const email = req.body.email;
-  const startPage = req.body.startPage;
-  const endPage = req.body.endPage;
-  const time = req.body.time;
-  const clicks = req.body.clicks;
+  
+  var current = new Date();
+  console.log(current)
   
   const db = client.db("largeProject");
+
   const results = await 
+  db.collection('users').find({email:email}).toArray();
+
+  startPage = ''
+  startTime = ''
+  endPage = ''
+  clicks = ''
+  inGame = false
+
+  if( results != null)
+  {
+    startTime = results[0].currentGame.startTime
+    startPage = results[0].currentGame.startPage
+    endPage = results[0].currentGame.endPage
+    clicks = results[0].currentGame.currentClicks
+    inGame = results[0].currentGame.inGame
+  }
+
+  if (!inGame) 
+  {
+    var ret = { success:false, matchCount:-1, modified:-1, email:'', error:'No information on current game.'};
+    res.status(200).json(ret);
+    return
+  }
+
+  // total time in seconds
+  totalTime = (current.getTime() - startTime.getTime()) / 1000 
+  console.log(totalTime)
+  const postResult = await 
   db.collection('users').updateOne(
     { email:email },
-    { $push: { playedGames: { startPage: startPage, endPage: endPage, time: time, clicks: clicks} } },
+    { $push: 
+      { playedGames: 
+        { 
+          startPage: startPage, 
+          endPage: endPage, 
+          time: totalTime, 
+          clicks: clicks
+        } 
+      } 
+    },
   );
 
+  // Reset users current game to defualt
+  db.collection('users').updateOne(
+    { email:email },
+    { $set: { "currentGame.startPage": null, 
+              "currentGame.endPage": null, 
+              "currentGame.currentPage": null,
+              "currentGame.startTime": null, 
+              "currentGame.currentClicks": 0, 
+              "currentGame.inGame": false
+            } 
+    },
+  );
   // check to see if the leaderboard needs to be cleared before we add the player's game
   if (!hasDeleteLeaderboardBeenQueued)
   {
@@ -459,18 +591,18 @@ app.post('/api/addPlayedGame', async (req, res, next) =>
     login: username,
     startPage: startPage,
     endPage: endPage,
-    time: time,
+    time: totalTime,
     clicks: clicks
   });
 
   acknowledged = false;
   matchCount = 0;
   modified = 0;
-  if( results != null)
+  if( postResult != null)
   {
-    acknowledged = results.acknowledged;
-    matchCount = results.matchedCount;
-    modified = results.modifiedCount;
+    acknowledged = postResult.acknowledged;
+    matchCount = postResult.matchedCount;
+    modified = postResult.modifiedCount;
   }
   var ret = { success:acknowledged, matchCount:matchCount, modified:modified, email:email, error:''};
   res.status(200).json(ret);
