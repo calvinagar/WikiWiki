@@ -23,17 +23,14 @@ export default class Leaderboard extends Component {
         try{
             var response = await fetch(buildPath('api/getDailyLeaderboard'), {method:'POST',headers:{'Content-Type': 'application/json'}});
             var res = JSON.parse(await response.text());
-            //if id == -1 error?
-            //else:
-           
-            var rank = 1;
 
             var tempGames = [];
 
             for(let i = 0; i < res.Leaderboard.length; i++){
-                tempGames[i] = " <tr> <td>" + res.leaderboard[i].rank + "</td>" +
+                tempGames[i] = " <tr> <td>" + (i+1) + "</td>" +
                                 " <td>" + res.leaderboard[i].login + "</td>" +
                                 " <td>" + res.leaderboard[i].clicks + "</td>" +
+                                " <td>" + res.leaderboard[i].time + "</td>" +
                                 " <td>" + res.leaderboard[i].startpage + "</td>" + 
                                 " <td>" + res.leaderboard[i].endpage + "</td> </tr>";
             }
@@ -60,6 +57,7 @@ export default class Leaderboard extends Component {
                         <th>Rank</th>
                         <th>Username</th>
                         <th>Clicks</th>
+                        <th>Time</th>
                         <th>Start-Page</th>
                         <th>End-Page</th>
                     </tr>
