@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.css';
+import '../App.css';
 import Sidebar from '../components/Sidebar'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
