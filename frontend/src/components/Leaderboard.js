@@ -21,7 +21,7 @@ export default class Leaderboard extends Component {
     getData = async () =>
     {
         try{
-            var response = await fetch(buildpath('api/getDailyLeaderboard'), {method:'POST',headers:{'Content-Type': 'application/json'}});
+            var response = await fetch(buildPath('api/getDailyLeaderboard'), {method:'POST',headers:{'Content-Type': 'application/json'}});
             var res = JSON.parse(await response.text());
             //if id == -1 error?
             //else:
