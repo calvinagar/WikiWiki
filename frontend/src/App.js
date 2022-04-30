@@ -9,6 +9,9 @@ import MainPage from './pages/MainPage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import GamePage from './pages/GamePage';
 import PlayPage from './pages/PlayPage';
+import VerificationPage from './pages/VerificationPage';
+import EmailPage from './pages/EmailPage';
+import PasswordPage from './pages/PasswordPage';
 
 function App() 
 {
@@ -32,6 +35,15 @@ function App()
         </Route>
         <Route exact path="/play">
           <PlayPage />
+        </Route>
+         <Route exact path = "/verification">
+          <VerificationPage />
+        </Route>
+        <Route exact path = "/email">
+          <EmailPage />
+        </Route>
+        <Route exact path = "/password">
+          <PasswordPage />
         </Route>
       </Switch>
     </Router>
