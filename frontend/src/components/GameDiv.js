@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import ReactDOM from "react-dom";
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
@@ -41,6 +40,9 @@ class GameDiv extends Component {
 
         globalPages = page;
 
+        document.getElementById('startDiv').innerHTML = "<p><b>StartPage: </b> " + globalPages.start_title.replaceAll('_', ' ') + "</p>";
+        document.getElementById('endDiv').innerHTML = "<p><b>EndPage: </b> " + globalPages.end_title.replaceAll('_', ' ') + "</p>";
+        console.log("Make sure the underscores are still there: " + globalPages.start_title);
         this.UserAction(globalPages.start_title);
 
         //The previous code may seem unecessary BUT IT IS NECESSARY. Please do not change, the pages were being set to different values once UserAction is called every game.
