@@ -3,7 +3,6 @@ import Sidebar from '../components/Sidebar'
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import '../App.css';
 import LongBriskCormorant from '../components/LongBriskCormorant.mp4';
 
 
@@ -14,7 +13,7 @@ const MainPage = () =>
     return(
 
         <>
-            <Container>
+            <Container id="cont1">
                 <Col xs={2}><Sidebar/></Col>
                 <Col>
                     <Row xs={0} id="title">Welcome (Welcome back {JSON.parse(hello).id})</Row>
