@@ -215,6 +215,18 @@ describe("POST /api/getPlayedGames", function() {
 });
 
 
+describe("POST /api/getPlayedGames", function() {
+    it("Verify games will not be retreived from player profile if email does not exist", async function() {
+        const response = await request(server).post("/api/getPlayedGames").send({
+            email: "dssadsafgeracasf",
+        })
+        leng = response.body.playedGames.length - 1
+        expect(response.statusCode).toBe(200)
+        expect(response.body.error).toBe("No accounts found with this email.")
+    });
+});
+
+
 describe("POST /api/resumeCurrentGame", function() {
     it('Making sure resume game does not work if there is no current game', async function() {
         const response = await request(server).post("/api/resumeCurrentGame").send({
