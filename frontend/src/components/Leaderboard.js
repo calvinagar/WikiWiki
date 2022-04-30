@@ -71,3 +71,16 @@ export default class Leaderboard extends Component {
         );
     }
 }
+
+const app_name = 'wikiwiki-cop4331'
+function buildPath(route)
+{
+    if (process.env.NODE_ENV === 'production') 
+    {
+        return 'https://' + app_name +  '.herokuapp.com/' + route;
+    }
+    else
+    {        
+        return 'http://localhost:5001/' + route;
+    }
+}
