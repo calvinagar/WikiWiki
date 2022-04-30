@@ -30,7 +30,7 @@ export default class Leaderboard extends Component {
 
             tempGames = [];
 
-            for(i = 0; i < res.Leaderboard.length; i++){
+            for(let i = 0; i < res.Leaderboard.length; i++){
                 tempGames[i] = " <tr> <td>" + res.leaderboard[i].rank + "</td>" +
                                 " <td>" + res.leaderboard[i].login + "</td>" +
                                 " <td>" + res.leaderboard[i].clicks + "</td>" +

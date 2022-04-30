@@ -8,13 +8,15 @@ import LongBriskCormorant from '../components/LongBriskCormorant.mp4';
 
 const MainPage = () =>
 {
+    var hello = localStorage.getItem('user_data');
+
     return(
 
-    <>
+        <>
             <Container>
                 <Col xs={2}><Sidebar/></Col>
                 <Col>
-                    <Row xs={0} id="title">Welcome (Welcome back ________)</Row>
+                    <Row xs={0} id="title">Welcome (Welcome back {JSON.parse(hello).id})</Row>
                     <Row id="bodytext"><p>
                     The <b>Welcome</b> page of WikiWiki. This page provides users with information regarding their previous games, 
                     such as the starting point, ending point, amount of links used, and total time (in the case of a tie). Players are encouraged to explore the rest of WikiWiki from this location, with special emphasis being directed to the Play section. Players on this page are also thanked for joining the WikiWiki community.
@@ -22,7 +24,7 @@ const MainPage = () =>
                     </Row>
                     <Row>
                         <Col>
-                            <video width="640" height="420" autoplay='yes' muted='yes' loop='yes'>
+                            <video width="640" height="420" autoPlay='yes' muted='yes' loop='yes'>
                                 <source src={LongBriskCormorant} type="video/mp4"></source>
                             </video>
                         </Col>

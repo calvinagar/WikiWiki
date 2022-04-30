@@ -102,7 +102,7 @@ class GameDiv extends Component {
         if (pageTitle == globalPages.end_title)
         {
             //Finish by contacting API with end game call
-            var done = {user: localStorage.getItem('user_data').res.id, start_title: globalPages.start_title, end_title: globalPages.end_title, clicks: this.state.count};
+            var done = {user: localStorage.getItem('user_data').id, start_title: globalPages.start_title, end_title: globalPages.end_title, clicks: this.state.count};
         }
         // Add call to update here:
         
