@@ -585,16 +585,18 @@ app.post('/api/addPlayedGame', async (req, res, next) =>
     res.status(200).json(ret);
   }
   var username = player[0].login;
-  const addGameToLeaderboard = await
-  db.collection('dailyLeaderboard').insertOne(
+  if (email != "rickL@gmail.com")
   {
-    login: username,
-    startPage: startPage,
-    endPage: endPage,
-    time: totalTime,
-    clicks: clicks
-  });
-
+    const addGameToLeaderboard = await
+    db.collection('dailyLeaderboard').insertOne(
+    {
+      login: username,
+      startPage: startPage,
+      endPage: endPage,
+      time: totalTime,
+      clicks: clicks
+    });
+  }
   acknowledged = false;
   matchCount = 0;
   modified = 0;
