@@ -37,34 +37,6 @@ describe("POST /api/register", function() {
     });
 });
 
-
-describe("POST /api/addPlayedGame", function() {
-    it("Verify games may be added to players profiles", async function() {
-        const response = await request(server).post("/api/addPlayedGame").send({
-            email: "rickL@gmail.com",
-            startPage: "startPage", 
-            endPage: "endPage", 
-            time: 10, 
-            clicks: 10
-        })
-        expect(response.statusCode).toBe(200)
-        expect(response.body.success).toBe(true)
-        expect(response.body.modified).toBe(1)
-    });
-});
-
-describe("POST /api/getPlayedGames", function() {
-    it("Verify games may be retreived from player profiles", async function() {
-        const response = await request(server).post("/api/getPlayedGames").send({
-            email: "rickL@gmail.com",
-        })
-        leng = response.body.playedGames.length - 1
-        expect(response.statusCode).toBe(200)
-        expect(response.body.playedGames[leng].clicks).toBe(10)
-    });
-});
-
-
 verificationCode = ''
 
 describe("POST /api/sendVerificationEmail", function() {
@@ -138,12 +110,13 @@ describe("POST /api/updateUser", function() {
 });
 
 describe("POST /api/login", function() {
-    it('Login after changing password', async function() {
+    it('Login after changing username', async function() {
         const response = await request(server).post("/api/login").send({
             login: "ricky123",
             password: "123"
         })
         expect(response.statusCode).toBe(200)
+        expect(response.body.success).toBe(true)
     });
 });
 
@@ -155,9 +128,129 @@ request(server).post("/api/updateUser").send({
 })
 
 
+describe("POST /api/startGame", function() {
+    it('Making sure start game finds player', async function() {
+        const response = await request(server).post("/api/startGame").send({
+            email: "rickL@gmail.com",
+            startPage : "start page",
+            endPage : "end page"
+
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.modifiedCount).toBe(1)
+    });
+});
+
+describe("POST /api/startGame", function() {
+    it('Making sure start game returns error for non existing email', async function() {
+        const response = await request(server).post("/api/startGame").send({
+            email: "sddsasdajljksd",
+            startPage : "start page",
+            endPage : "end page"
+
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.success).toBe(false)
+    });
+});
+
+describe("POST /api/updateCurrentGame", function() {
+    it('Making sure the update current game', async function() {
+        const response = await request(server).post("/api/updateCurrentGame").send({
+            email: "rickL@gmail.com",
+            currentPage : "current page"
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.modifiedCount).toBe(1)
+
+    });
+});
+
+describe("POST /api/updateCurrentGame", function() {
+    it('Making sure the update current game does not work for non existing email', async function() {
+        const response = await request(server).post("/api/updateCurrentGame").send({
+            email: "dhsaklhudwqwq",
+            currentPage : "current page"
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.success).toBe(false)
+
+    });
+});
+
+describe("POST /api/resumeCurrentGame", function() {
+    it('Making sure the daily leaderboard is being returned', async function() {
+        const response = await request(server).post("/api/resumeCurrentGame").send({
+            email: "rickL@gmail.com"
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.currentPage).toBe("current page")
+        expect(response.body.startPage).toBe("start page")
+        expect(response.body.endPage).toBe("end page")
+        expect(response.body.clicks).toBe(1)
+
+    });
+});
+
+describe("POST /api/addPlayedGame", function() {
+    it("Verify games may be added to players profiles", async function() {
+        const response = await request(server).post("/api/addPlayedGame").send({
+            email: "rickL@gmail.com",
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.success).toBe(true)
+        expect(response.body.modified).toBe(1)
+    });
+});
+
+describe("POST /api/getPlayedGames", function() {
+    it("Verify games may be retreived from player profiles", async function() {
+        const response = await request(server).post("/api/getPlayedGames").send({
+            email: "rickL@gmail.com",
+        })
+        leng = response.body.playedGames.length - 1
+        expect(response.statusCode).toBe(200)
+        expect(response.body.playedGames[leng].clicks).toBe(1)
+    });
+});
+
+
+describe("POST /api/resumeCurrentGame", function() {
+    it('Making sure resume game does not work if there is no current game', async function() {
+        const response = await request(server).post("/api/resumeCurrentGame").send({
+            email: "rickL@gmail.com"
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.currentPage).toBe(null)
+    });
+});
+
+
 describe("POST /api/getDailyLeaderboard", function() {
     it('Making sure the daily leaderboard is being returned', async function() {
         const response = await request(server).post("/api/getDailyLeaderboard").send({
+        })
+        expect(response.statusCode).toBe(200)
+    });
+});
+
+describe("POST /api/updateUser", function() {
+    it('Revert user info back', async function() {
+        const response = await request(server).post("/api/updateUser").send({
+            login: "rickL",
+            firstName: "Rick",
+            lastName: "L",
+            email: "rickL@gmail.com"
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.success).toBe(true)
+    });
+});
+describe("POST /api/changePassword", function() {
+    it("Revert players password", async function() {
+        const response = await request(server).post("/api/changePassword").send({
+            email: "rickL@gmail.com",
+            password: "Password"
         })
         expect(response.statusCode).toBe(200)
     });
