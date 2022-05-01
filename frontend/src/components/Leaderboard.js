@@ -14,8 +14,11 @@ export default class Leaderboard extends Component {
 
     getData = async () =>
     {
+        var obj = {numGames:25};
+        var js = JSON.stringify(obj);
+        
         try{
-            var response = await fetch(buildPath('api/getDailyLeaderboard'), {method:'POST',headers:{'Content-Type': 'application/json'}});
+            var response = await fetch(buildPath('api/getDailyLeaderboard'), {method:'POST', body:js, headers:{'Content-Type': 'application/json'}});
             var res = JSON.parse(await response.text());
             console.log(res);
 
