@@ -444,11 +444,11 @@ app.post('/api/resumeCurrentGame', async (req, res, next) =>
 
   if (!inGame) 
   {
-    var ret = { currentPage:currentPage,startPage:startPage, endPage:endPage, clicks:clicks, error:'No information on current game.'};
+    var ret = { inGame:inGame, currentPage:currentPage,startPage:startPage, endPage:endPage, clicks:clicks, error:'No information on current game.'};
   }
   else
   {
-    var ret = { currentPage:currentPage,startPage:startPage, endPage:endPage, clicks:clicks, error:'' };
+    var ret = { inGame:inGame, currentPage:currentPage,startPage:startPage, endPage:endPage, clicks:clicks, error:'' };
   }
   res.status(200).json(ret);
 });
@@ -463,7 +463,6 @@ app.post('/api/startGame', async (req, res, next) =>
   const endPage = req.body.endPage;
 
   var current = new Date();
-  console.log(current)
 
   const db = client.db("largeProject");
   const results = await 
@@ -499,7 +498,6 @@ app.post('/api/addPlayedGame', async (req, res, next) =>
   const email = req.body.email;
   
   var current = new Date();
-  console.log(current)
   
   const db = client.db("largeProject");
 
@@ -530,7 +528,7 @@ app.post('/api/addPlayedGame', async (req, res, next) =>
 
   // total time in seconds
   totalTime = (current.getTime() - startTime.getTime()) / 1000 
-  console.log(totalTime)
+
   const postResult = await 
   db.collection('users').updateOne(
     { email:email },
@@ -606,6 +604,45 @@ app.post('/api/addPlayedGame', async (req, res, next) =>
     matchCount = postResult.matchedCount;
     modified = postResult.modifiedCount;
   }
+  var ret = { success:acknowledged, matchCount:matchCount, modified:modified, email:email, error:''};
+  res.status(200).json(ret);
+});
+
+app.post('/api/quitGame', async (req, res, next) => 
+{
+  // incoming: email, startPage, endPage, time, clicks
+  // outgoing: list of games played
+  var error = '';
+  const email = req.body.email;
+  
+  var current = new Date();
+  
+  const db = client.db("largeProject");
+
+  // Reset users current game to defualt
+  const postResult = await 
+  db.collection('users').updateOne(
+    { email:email },
+    { $set: { "currentGame.startPage": null, 
+              "currentGame.endPage": null, 
+              "currentGame.currentPage": null,
+              "currentGame.startTime": null, 
+              "currentGame.currentClicks": 0, 
+              "currentGame.inGame": false
+            } 
+    },
+  );
+
+  acknowledged = false;
+  matchCount = 0;
+  modified = 0;
+  if( postResult != null)
+  {
+    acknowledged = postResult.acknowledged;
+    matchCount = postResult.matchedCount;
+    modified = postResult.modifiedCount;
+  }
+ 
   var ret = { success:acknowledged, matchCount:matchCount, modified:modified, email:email, error:''};
   res.status(200).json(ret);
 });

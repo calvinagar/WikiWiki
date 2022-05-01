@@ -237,6 +237,32 @@ describe("POST /api/resumeCurrentGame", function() {
     });
 });
 
+request(server).post("/api/startGame").send({
+    email: "rickL@gmail.com",
+    startPage : "start page",
+    endPage : "end page"
+})
+
+describe("POST /api/quitGame", function() {
+    it('Testing quit game', async function() {
+        const response = await request(server).post("/api/startGame").send({
+            email: "rickL@gmail.com",
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.success).toBe(true)
+    });
+});
+
+describe("POST /api/resumeCurrentGame", function() {
+    it('Making sure resume game does not work after quiting', async function() {
+        const response = await request(server).post("/api/resumeCurrentGame").send({
+            email: "rickL@gmail.com"
+        })
+        expect(response.statusCode).toBe(200)
+        expect(response.body.currentPage).toBe(null)
+    });
+});
+
 
 describe("POST /api/getDailyLeaderboard", function() {
     it('Making sure the daily leaderboard is being returned', async function() {
