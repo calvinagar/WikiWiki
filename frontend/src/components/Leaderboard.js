@@ -21,8 +21,8 @@ export default class Leaderboard extends Component {
 
             var tempGames = "";
 
-            for(let i = 1; i < res.leaderboard.length; i++){
-                tempGames += " <tr> <td>" + i + "</td>" +
+            for(let i = 0; i < res.leaderboard.length; i++){
+                tempGames += " <tr> <td>" + (i+1) + "</td>" +
                                 " <td>" + res.leaderboard[i].login + "</td>" +
                                 " <td>" + res.leaderboard[i].clicks + "</td>" +
                                 " <td>" + res.leaderboard[i].startpage + "</td>" + 
