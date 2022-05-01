@@ -651,9 +651,13 @@ app.post('/api/getDailyLeaderboard', async (req, res, next) =>
 {
   // incoming: 
   // outgoing: bool, daily leaderboard sorted by clicks
+  const numGames = req.body.numGames;
+
   const db = client.db('largeProject');
   const sortLeaderboard = await
-  db.collection('dailyLeaderboard').find({}, {projection: {_id:0, login:1, clicks:1, time:1} }).sort({clicks:1}).toArray();
+  db.collection('dailyLeaderboard').find({}).sort({clicks:1}).limit(numGames).toArray();
+
+  
 
   var ret = { success:true, leaderboard:sortLeaderboard }
   res.status(200).json(ret);
