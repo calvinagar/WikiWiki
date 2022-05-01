@@ -99,7 +99,7 @@ class GameDiv extends Component {
         }
 
         //Complete Game
-        if (pageTitle == globalPages.end_title)
+        if (encodeURIComponent(pageTitle) == encodeURIComponent(globalPages.end_title))
         {
             //Finish by contacting API with end game call
             var done = {user: localStorage.getItem('user_data').id, start_title: globalPages.start_title, end_title: globalPages.end_title, clicks: this.state.count};
