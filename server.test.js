@@ -267,6 +267,7 @@ describe("POST /api/resumeCurrentGame", function() {
 describe("POST /api/getDailyLeaderboard", function() {
     it('Making sure the daily leaderboard is being returned', async function() {
         const response = await request(server).post("/api/getDailyLeaderboard").send({
+            numGames: 10
         })
         expect(response.statusCode).toBe(200)
     });
