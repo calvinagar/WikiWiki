@@ -19,10 +19,10 @@ export default class Leaderboard extends Component {
             var res = JSON.parse(await response.text());
             console.log(res);
 
-            var tempGames = [];
+            var tempGames = "";
 
             for(let i = 1; i < res.leaderboard.length; i++){
-                tempGames[i] = " <tr> <td>" + i + "</td>" +
+                tempGames += " <tr> <td>" + i + "</td>" +
                                 " <td>" + res.leaderboard[i].login + "</td>" +
                                 " <td>" + res.leaderboard[i].clicks + "</td>" +
                                 " <td>" + res.leaderboard[i].startpage + "</td>" + 
@@ -51,8 +51,7 @@ export default class Leaderboard extends Component {
                         <th>End-Page</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {this.state.games}
+                <tbody dangerouslySetInnerHTML={{__html: this.state.games}}>
                 </tbody>
             </Table>
         );
