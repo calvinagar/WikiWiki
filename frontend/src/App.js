@@ -12,6 +12,7 @@ import PlayPage from './pages/PlayPage';
 import VerificationPage from './pages/VerificationPage';
 import EmailPage from './pages/EmailPage';
 import PasswordPage from './pages/PasswordPage';
+import UserPage from './pages/UserPage'
 
 function App() 
 {
@@ -44,6 +45,9 @@ function App()
         </Route>
         <Route exact path = "/password">
           <PasswordPage />
+        </Route>
+        <Route exact path = "/user">
+          <UserPage />
         </Route>
       </Switch>
     </Router>
