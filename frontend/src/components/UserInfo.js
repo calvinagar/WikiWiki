@@ -13,11 +13,11 @@ export default class UserInfo extends Component {
 		}; 
 	}
 
-    componentDidMount()
+    /*componentDidMount()
     {
         var user = localStorage.getItem('user_data');
         this.setState(this.user, JSON.parse(user));
-    }
+    }*/
 
     render() {
         return (
