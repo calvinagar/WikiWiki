@@ -13,17 +13,17 @@ export default class UserInfo extends Component {
 
 	}
 
-    componentDidMount()
+    /*componentDidMount()
     {
         var user = localStorage.getItem('user_data');
         this.setState(this.user, JSON.parse(user));
         this.getData();
-    }
+    }*/
 
     getData = async () =>
     {
         try{
-            var obj = {email:this.user.email};
+            var obj = {email:localStorage.getItem('user_data').email};
             var js = JSON.stringify(obj);
             var response = await fetch(buildPath('api/getPlayedGames'), {method:'POST', body:js, headers:{'Content-Type': 'application/json'}});
             var res = JSON.parse(await response.text());
