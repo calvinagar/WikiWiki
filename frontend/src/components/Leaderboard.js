@@ -28,8 +28,8 @@ export default class Leaderboard extends Component {
                 tempGames += " <tr> <td>" + (i+1) + "</td>" +
                                 " <td>" + res.leaderboard[i].login + "</td>" +
                                 " <td>" + res.leaderboard[i].clicks + "</td>" +
-                                " <td>" + res.leaderboard[i].startpage + "</td>" + 
-                                " <td>" + res.leaderboard[i].endpage + "</td> </tr>";
+                                " <td>" + res.leaderboard[i].startPage + "</td>" + 
+                                " <td>" + res.leaderboard[i].endPage + "</td> </tr>";
             }
             
             this.setState({ games: tempGames });
