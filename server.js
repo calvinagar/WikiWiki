@@ -469,7 +469,8 @@ app.post('/api/startGame', async (req, res, next) =>
   db.collection('users').updateOne(
     { email: email },
     { $set: { "currentGame.startPage": startPage, 
-              "currentGame.endPage": endPage, 
+              "currentGame.endPage": endPage,
+              "currentGame.currentClicks": 0,
               "currentGame.inGame": true,
               "currentGame.startTime": current,
               "currentGame.currentPage": startPage
