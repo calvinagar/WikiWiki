@@ -28,6 +28,7 @@ export default class Leaderboard extends Component {
                 tempGames += " <tr> <td>" + (i+1) + "</td>" +
                                 " <td>" + res.leaderboard[i].login + "</td>" +
                                 " <td>" + res.leaderboard[i].clicks + "</td>" +
+                                " <td>" + res.leaderboard[i].time + "</td>" + 
                                 " <td>" + res.leaderboard[i].startPage + "</td>" + 
                                 " <td>" + res.leaderboard[i].endPage + "</td> </tr>";
             }
@@ -50,6 +51,7 @@ export default class Leaderboard extends Component {
                         <th>Rank</th>
                         <th>Username</th>
                         <th>Clicks</th>
+                        <th>Time (seconds) </th>
                         <th>Start-Page</th>
                         <th>End-Page</th>
                     </tr>
