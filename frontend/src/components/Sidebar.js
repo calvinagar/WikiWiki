@@ -1,7 +1,12 @@
 import React, {Component} from "react";
 import './Sidebar.css'
 
+function clearLocal() {
+  localStorage.clear();
+}
+
 class Sidebar extends Component {
+
     render () {
         return (
         <div id="wrapper" className="toggled">
@@ -26,6 +31,10 @@ class Sidebar extends Component {
               <li>
                 {" "}
                 <a href="/play">Play</a>{" "}
+              </li>
+              <li>
+                {" "}
+                <a onclick={clearLocal()} href="/">Log Out</a>{" "}
               </li>
             </ul>
           </div>
