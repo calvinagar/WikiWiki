@@ -44,7 +44,7 @@ background: #ddcef2;
 border-color: #afa3bf;
 border-width: 1px;
 border-style: solid;
-margin-bottom: 50px;
+margin-bottom: 20px;
 }
 
 #titleSecondary2 {
@@ -58,7 +58,7 @@ background: #cedff2;
 border-color: #a3b0bf;
 border-width: 1px;
 border-style: solid;
-margin-bottom: 50px;
+margin-bottom: 20px;
 }
 
 #newRow {
@@ -102,7 +102,7 @@ border-color: #ddcef2;
 background: #faf5ff;
 border-width: 1px;
 border-style: solid;
-height: 400px;
+height: 430px;
 padding: 2px;
 margin: 2px;
 }
@@ -121,6 +121,15 @@ background-color: #cedff2;
 background-color: #c5e1ff40;
 }
 
+#errUser {
+  text-align: center;
+  color: red;
+}
+
+#userLabel {
+  margin-left: 20px;
+}
+
 #tableRow2 {
 background-color: #d5e9ff40;
 }
@@ -132,7 +141,7 @@ border-color: #cedff2;
 background: #f5faff;
 border-width: 1px;
 border-style: solid;
-height: 400px;
+height: 430px;
 padding: 2px;
 margin: 2px;
 }

@@ -55,7 +55,7 @@ export default class UserInfo extends Component {
     render() {
         return (
             <>
-                <Table striped bordered hover class="table-dark" id="userTable" variant="Primary" >
+                <Table striped bordered hover id="userTable">
                 <thead>
                     <tr id="head">
                         <th>Personal Rank</th>

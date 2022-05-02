@@ -30,7 +30,7 @@ function Login()
             }
             else
             {
-                var user = {firstName:res.firstName,lastName:res.lastName,id:res.id,email:res.email};
+                var user = {firstName:res.firstName,lastName:res.lastName,id:res.id,email:res.email,login:obj.login};
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 window.location.href = '/main';
