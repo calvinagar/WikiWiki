@@ -13,17 +13,17 @@ export default class UserInfo extends Component {
 
 	}
 
-    /*componentDidMount()
+    componentDidMount()
     {
-        var user = localStorage.getItem('user_data');
-        this.setState(this.user, JSON.parse(user));
+        //var user = localStorage.getItem('user_data');
+        //this.setState(this.user, JSON.parse(user));
         this.getData();
-    }*/
+    }
 
     getData = async () =>
     {
         try{
-            var obj = {email:localStorage.getItem('user_data').email};
+            var obj = {email:JSON.parse(localStorage.getItem('user_data')).email};
             var js = JSON.stringify(obj);
             var response = await fetch(buildPath('api/getPlayedGames'), {method:'POST', body:js, headers:{'Content-Type': 'application/json'}});
             var res = JSON.parse(await response.text());
@@ -39,8 +39,9 @@ export default class UserInfo extends Component {
             for(let i = 0; i < length; i++){
                 tempGames += " <tr " + suffix[i%2] + "> <td>" + (i+1) + "</td>" +
                                 " <td>" + res.playedGames[i].clicks + "</td>" +
-                                " <td>" + res.playedGames[i].startpage + "</td>" + 
-                                " <td>" + res.playedGames[i].endpage + "</td> </tr>";
+                                " <td>" + res.playedGames[i].time + "</td>" + 
+                                " <td>" + res.playedGames[i].startPage + "</td>" + 
+                                " <td>" + res.playedGames[i].endPage + "</td> </tr>";
             }
             
             this.setState({ games: tempGames });
