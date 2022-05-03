@@ -374,6 +374,13 @@ app.post('/api/getPlayedGames', async (req, res, next) =>
   if( results.length > 0)
   {
     playedGames = results[0].playedGames
+    
+    playedGames.sort(function(a, b) {
+      if (a.clicks - b.clicks == 0)
+        return a.time - b.time;
+      else
+        return a.clicks - b.clicks;
+    });
   }
   else
   {
