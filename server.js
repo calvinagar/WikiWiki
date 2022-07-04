@@ -17,7 +17,7 @@ const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const { ObjectID } = require('bson');
-const nodemailer = require('nodemailer');
+const nodeoutlook = require('nodejs-nodemailer-outlook');
 const emailValidator = require('email-validator');
 app.use(cors());
 app.use(bodyParser.json());
@@ -181,23 +181,16 @@ app.post('/api/sendVerificationEmail', async (req, res, next) =>
     // generate a random 5-digit code
     var code = Math.floor(Math.random() * 90000) + 10000;
 
-    var transport = nodemailer.createTransport({
-      service: 'gmail',
+    nodeoutlook.sendEmail({
       auth: {
-        user: "thewikiwikigame@gmail.com",
+        user: "WikiWikiGame@outlook.com",
         pass: process.env.EMAIL_PASSWORD
-      }
-    });
-
-    const mailOptions = {
-      from: '"WikiWiki" <thewikiwikigame@gmail.com>', // sender's email
+      },
+      from: '"WikiWiki" <WikiWikiGame@outlook.com>', // sender's email
       to: email, // recipient
       subject: 'Email Verification Code', // subject
-      text: 'Your verification code is ' + code.toString() + '.'
-      // html: '<b></b>' // html content
-    };
-
-    let send = await transport.sendMail(mailOptions);
+      text: 'Your verification code is ' + code.toString() + '.',
+    });
 
     const addCodeToDB = await 
     db.collection('users').updateOne(
@@ -245,23 +238,16 @@ app.post('/api/sendPasswordResetEmail', async (req, res, next) =>
     // generate a random 5-digit code
     var code = Math.floor(Math.random() * 90000) + 10000;
 
-    var transport = nodemailer.createTransport({
-      service: 'gmail',
+    nodeoutlook.sendEmail({
       auth: {
-        user: "thewikiwikigame@gmail.com",
-        pass: "WikiWikiEmail"
-      }
-    });
-
-    const mailOptions = {
-      from: '"WikiWiki" <thewikiwikigame@gmail.com>', // sender's email
+        user: "WikiWikiGame@outlook.com",
+        pass: process.env.EMAIL_PASSWORD
+      },
+      from: '"WikiWiki" <WikiWikiGame@outlook.com>', // sender's email
       to: email, // recipient
       subject: 'Password Reset Code', // subject
       text: 'Your password reset code is ' + code.toString() + '.'
-      // html: '<b></b>' // html content
-    };
-
-    let send = await transport.sendMail(mailOptions);
+    });
 
     const addCodeToDB = await 
     db.collection('users').updateOne(
