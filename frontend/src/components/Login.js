@@ -26,11 +26,11 @@ function Login()
             var res = JSON.parse(await response.text());
             if( res.id == -1 )
             {
-                alert('User/Password combination incorrect.');
+                setMessage('User/Password combination incorrect.');
             }
             else
             {
-                var user = {firstName:res.firstName,lastName:res.lastName,id:res.id}
+                var user = {firstName:res.firstName,lastName:res.lastName,id:res.id,email:res.email,login:obj.login};
                 localStorage.setItem('user_data', JSON.stringify(user));
                 setMessage('');
                 window.location.href = '/main';
@@ -38,7 +38,7 @@ function Login()
         }
         catch(e)
         {
-            alert(e.toString());
+            setMessage(e.toString());
             return;
         }    
     };
@@ -58,6 +58,7 @@ function Login()
                     <Col></Col>
                     <Col xs={6}>
                     <h1 id="inner-title">Log In</h1>
+                    <h3>{message}</h3>
                     <Form>
                         <Form.Group className="mb-3" controlId="formBasicUserName">
                         <Form.Label>Username</Form.Label>
@@ -70,7 +71,7 @@ function Login()
                     </Form>
                 <Button onClick={doLogin}>Log in</Button>   <Link to="/register" className="btn btn-outline-primary">Register</Link>
                 <br />
-                <Link to="/register">Forgot your password?</Link>
+                <Link to="/email">Forgot your password?</Link>
                     </Col>
                     <Col></Col>
                 </Row>

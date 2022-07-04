@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import './Sidebar.css'
 
 class Sidebar extends Component {
+
     render () {
         return (
         <div id="wrapper" className="toggled">
@@ -13,19 +14,23 @@ class Sidebar extends Component {
               </li>
               <li>
                 {" "}
-                <a href="MainPage">Home</a>{" "}
+                <a href="/main">Home</a>{" "}
               </li>
               <li>
                 {" "}
-                <a href="LeaderboardPage">Leaderboard</a>{" "}
+                <a href="/leaderboard">Leaderboard</a>{" "}
               </li>
               <li>
                 {" "}
-                <a href="UserPage">User</a>{" "}
+                <a href="/user">User</a>{" "}
               </li>
               <li>
                 {" "}
-                <a href="GamePage">Play</a>{" "}
+                <a href="/play">Play</a>{" "}
+              </li>
+              <li>
+                {" "}
+                <a href="/">Log Out</a>{" "}
               </li>
             </ul>
           </div>

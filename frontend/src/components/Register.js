@@ -18,15 +18,6 @@ function Register()
 
     const [message, setMessage] = useState('');
 
-    /* const doRegister = async event => 
-    {
-        event.preventDefault();
-
-        alert(loginName.value + ' ' + loginPassword.value + ' ' + firstName.value + ' ' + lastName.value + ' ' + email.value);
-        
-        window.location.href = '/';
-    }; */
-
     const doRegister = async event => 
     {
         event.preventDefault();
@@ -38,17 +29,29 @@ function Register()
             var res = JSON.parse(await response.text());
             if( res.id <= 0 )
             {
-                alert(res.error);
+                setMessage(res.error);
             }
             else
             {
-                alert("Successfully registered user!")
-                window.location.href = '/';
+                var em_obj = {email:email.value};
+                var em_js = JSON.stringify(em_obj);
+                const email_response = await fetch(buildPath('api/sendVerificationEmail'),{method:'POST',body:em_js,headers:{'Content-Type': 'application/json'}});
+                var email_res = JSON.parse(await email_response.text());
+                if (email_res.error != '') {
+                    setMessage(email_res.error);
+                } else {
+                    var verif_id = {verifyEmail:true,email:email.value}
+                    localStorage.setItem('verif_id', JSON.stringify(verif_id));
+                    setMessage("Email verification code sent!")
+                    setTimeout(() => {
+                        window.location.href = '/verification';
+                      }, 2000);
+                }
             }
         }
         catch(e)
         {
-            alert(e.toString());
+            setMessage(e.toString());
             return;
         }    
     };
@@ -67,6 +70,7 @@ function Register()
                 <Col></Col>
                 <Col xs={6}>
                 <h1 id="inner-title">Register</h1>
+                <h3>{message}</h3>
                 <Form>
                     <Form.Group className="mb-3" controlId="formBasicUserName">
                     <Form.Label>Username</Form.Label>

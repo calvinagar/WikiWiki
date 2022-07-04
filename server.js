@@ -374,6 +374,13 @@ app.post('/api/getPlayedGames', async (req, res, next) =>
   if( results.length > 0)
   {
     playedGames = results[0].playedGames
+    
+    playedGames.sort(function(a, b) {
+      if (a.clicks - b.clicks == 0)
+        return a.time - b.time;
+      else
+        return a.clicks - b.clicks;
+    });
   }
   else
   {
@@ -469,7 +476,8 @@ app.post('/api/startGame', async (req, res, next) =>
   db.collection('users').updateOne(
     { email: email },
     { $set: { "currentGame.startPage": startPage, 
-              "currentGame.endPage": endPage, 
+              "currentGame.endPage": endPage,
+              "currentGame.currentClicks": 0,
               "currentGame.inGame": true,
               "currentGame.startTime": current,
               "currentGame.currentPage": startPage
@@ -655,10 +663,8 @@ app.post('/api/getDailyLeaderboard', async (req, res, next) =>
 
   const db = client.db('largeProject');
   const sortLeaderboard = await
-
-  db.collection('dailyLeaderboard').find({}).sort({clicks:1}).limit(numGames).toArray();
-
   
+  db.collection('dailyLeaderboard').find({}).sort({clicks:1, time:1}).limit(numGames).toArray();
 
   var ret = { success:true, leaderboard:sortLeaderboard }
   res.status(200).json(ret);
